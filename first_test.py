@@ -19,6 +19,7 @@ with open(opt.links_path, "r") as file:
 
 ydl_opts = {
     'format': 'bestaudio',
+    'outtmpl': '%(title)s.%(ext)s',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
@@ -27,3 +28,6 @@ ydl_opts = {
 }
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     ydl.download(links) 
+    #info = ydl.extract_info(links[0], download=False)
+    #print(info.get('title', None))
+    
