@@ -6,6 +6,10 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--links_path", type=str, default='links',
                     help="Chemin vers la liste des liens")
+parser.add_argument("-f", "--format", type=str, default='mp3',
+                    help="Type de format")
+parser.add_argument("-q", "--quality", type=str, default='192',
+                    help="Niveau de qualité")
 opt = parser.parse_args()
 print(opt)
 
@@ -22,12 +26,12 @@ ydl_opts = {
     'outtmpl': '%(title)s.%(ext)s',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
-        'preferredquality': '192',
+        'preferredcodec': opt.format,
+        'preferredquality': opt.quality,
     }],
 }
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     ydl.download(links) 
-    #info = ydl.extract_info(links[0], download=False)
-    #print(info.get('title', None))
+    info = ydl.extract_info(links[0], download=False)
+    print(info.get('title', None))
     
