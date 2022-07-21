@@ -4,11 +4,11 @@ import argparse
 # Parser
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--links_path", type=str, default='links.json',
-                    help="Chemin vers la liste des liens en format JSON")
+                    help="List of links in JSON format.")
 parser.add_argument("-f", "--format", type=str, default='opus',
-                    help="Type de format")
+                    help="Coding format")
 parser.add_argument("-q", "--quality", type=str, default='192',
-                    help="Niveau de qualité")
+                    help="Quality level")
 parser.add_argument('-verbose', type=bool, default=True,
                     help="Verbosité")
 
