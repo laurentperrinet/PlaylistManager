@@ -1,9 +1,8 @@
-import youtube_dl
 import argparse
 
 # Parser
 parser = argparse.ArgumentParser()
-parser.add_argument("-p", "--links_path", type=str, default='links.json',
+parser.add_argument("-p", "--links_path", type=str, default='2021-01-15_balouzza.json',
                     help="List of links in JSON format.")
 parser.add_argument("-f", "--format", type=str, default='opus',
                     help="Coding format")
@@ -23,22 +22,29 @@ if opt.verbose: print(opt)
 import json
 with open(opt.links_path, "r") as file:
     links = json.load(file)
-    if opt.verbose: print(links)
+    #if opt.verbose: print(links)
 
-for link in links.keys():
-    if opt.verbose: print(link, links[link])
+import os
+os.makedirs('output', exist_ok=True)
+folder_name = opt.links_path.strip('.json')
+os.makedirs(f'output/{folder_name}', exist_ok=True)
+
+import yt_dlp
+for title in links.keys():
+    if opt.verbose: print(title, links[title])
 
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': f'output/{link}/%(title)s.%(ext)s',
+        'outtmpl': f'output/{folder_name}/%(autonumber)s-%(title)s.%(ext)s',
+        #'outtmpl': f'output/{folder_name}/%(autonumber)s-%({title})s.%(ext)s',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': opt.format,
             'preferredquality': opt.quality,
         }],
     }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         if opt.verbose:
-            info = ydl.extract_info(links[link], download=False)
+            info = ydl.extract_info(links[title], download=False)
             print(info.get('title', None))
-        ydl.download([links[link]])
+        ydl.download([links[title]])
