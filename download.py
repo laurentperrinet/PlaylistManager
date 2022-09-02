@@ -32,14 +32,21 @@ folder_name = opt.links_path.strip('.json')
 os.makedirs(f'output/{folder_name}', exist_ok=True)
 
 import yt_dlp
-number = 1
+# loop to check all is there
+for title in links.keys():
+    with yt_dlp.YoutubeDL() as ydl:
+        if opt.verbose:
+            info = ydl.extract_info(links[title], download=False)
+            print(info.get('title', None))
 
+# do the actual stuff
+number = 1
 for title in links.keys():
     if opt.verbose: print(title, links[title])
 
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-%(title)s.%(ext)s',
+        'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-{title}-%(title)s.%(ext)s',
         #'outtmpl': f'output/{folder_name}/%(autonumber)s-%({title})s.%(ext)s',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -48,9 +55,6 @@ for title in links.keys():
         }],
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        if opt.verbose:
-            info = ydl.extract_info(links[title], download=False)
-            print(info.get('title', None))
         ydl.download([links[title]])
 
     number += 1
