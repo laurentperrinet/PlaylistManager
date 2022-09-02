@@ -15,6 +15,10 @@ parser.add_argument('-verbose', type=bool, default=True,
 opt = parser.parse_args()
 if opt.verbose: print(opt)
 
+
+# TODO : alternate solution
+# yt-dlp -o "%(autonumber)s-%(artist)s-%(track)s.%(ext)s" --extract-audio --audio-format mp3 --audio-quality 0 --ffmpeg-location /usr/bin/
+
 # Lecture des liens
 import json
 with open(opt.links_path, "r") as file:
