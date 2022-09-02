@@ -4,6 +4,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--links_path", type=str, default='2021-01-15_balouzza.json',
                     help="List of links in JSON format.")
+parser.add_argument("--prefix", type=str, default='PL',
+                    help="Coding format")
 parser.add_argument("-f", "--format", type=str, default='opus',
                     help="Coding format")
 parser.add_argument("-q", "--quality", type=str, default='192',
@@ -30,12 +32,14 @@ folder_name = opt.links_path.strip('.json')
 os.makedirs(f'output/{folder_name}', exist_ok=True)
 
 import yt_dlp
+number = 1
+
 for title in links.keys():
     if opt.verbose: print(title, links[title])
 
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': f'output/{folder_name}/%(autonumber)s-%(title)s.%(ext)s',
+        'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-%(title)s.%(ext)s',
         #'outtmpl': f'output/{folder_name}/%(autonumber)s-%({title})s.%(ext)s',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -48,3 +52,5 @@ for title in links.keys():
             info = ydl.extract_info(links[title], download=False)
             print(info.get('title', None))
         ydl.download([links[title]])
+
+    number += 1
