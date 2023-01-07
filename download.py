@@ -72,6 +72,7 @@ for url in links.keys():
         #'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-%(title)s.%(ext)s',
         'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-{links[url]}-%(title)s.%(ext)s',
         #'outtmpl': f'output/{folder_name}/%(autonumber)s-%({title})s.%(ext)s',
+        'metadata-from-title':"%(artist)s - %(title)s",
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': opt.format,
