@@ -5,7 +5,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--links_path", type=str, default='2021-01-15_balouzza.json',
                     help="List of links in JSON or TXT format.")
 parser.add_argument("--prefix", type=str, default='PL',
-                    help="Coding format")
+                    help="Prefix for filenames")
 parser.add_argument("-f", "--format", type=str, default='opus',
                     help="Coding format")
 parser.add_argument("-q", "--quality", type=str, default='0', # zero for best
@@ -82,3 +82,16 @@ for url in links.keys():
         ydl.download([url])
 
     number += 1
+
+print(50*'-')
+print('# normalize')
+print(50*'-')
+
+import glob
+
+for fname in glob.glob(f'output/{folder_name}/*.opus'):
+    cmd = f'ffmpeg -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" "{fname}"'
+    print(cmd)
+    os.system(cmd)
+
+
