@@ -95,8 +95,5 @@ for fname in glob.glob(f'output/{folder_name}/*.opus'):
     cmd = f'ffmpeg -y -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" /tmp/file.opus'
     print(cmd)
     os.system(cmd)
-    cmd = f'shutil.move("/tmp/file.opus", "{fname}")'
-    print(cmd)
-    os.system(cmd)
-
+    shutil.move("/tmp/file.opus", "{fname}")
 
