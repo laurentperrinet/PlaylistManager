@@ -70,7 +70,8 @@ for url in links.keys():
     ydl_opts = {
         'format': 'bestaudio/best',
         #'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-%(title)s.%(ext)s',
-        'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-{links[url]}-%(title)s.%(ext)s',
+        # 'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-{links[url]}-%(title)s.%(ext)s',
+        'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-{links[url]}.%(ext)s',
         #'outtmpl': f'output/{folder_name}/%(autonumber)s-%({title})s.%(ext)s',
         'metadata-from-title':"%(artist)s - %(title)s",
         'postprocessors': [{
@@ -89,9 +90,12 @@ print('# normalize')
 print(50*'-')
 
 import glob
-
+import shutil
 for fname in glob.glob(f'output/{folder_name}/*.opus'):
-    cmd = f'ffmpeg -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" "{fname}"'
+    cmd = f'ffmpeg -y -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" /tmp/file.opus'
+    print(cmd)
+    os.system(cmd)
+    cmd = f'shutil.move("/tmp/file.opus", "{fname}")'
     print(cmd)
     os.system(cmd)
 
