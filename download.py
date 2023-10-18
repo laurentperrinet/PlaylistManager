@@ -52,7 +52,9 @@ print(50*'-')
 print('# loop to check all is there')
 print(50*'-')
 # infos = {} 
+totalnumber = 0
 for url in links.keys():
+    totalnumber += 1
     with yt_dlp.YoutubeDL() as ydl:
         info = ydl.extract_info(url, download=False).get('title', None)
         # infos[title] = info
@@ -67,13 +69,10 @@ print(50*'-')
 number = 1
 for url in links.keys():
     if opt.verbose: print(url, links[url])
-
+    fname = f'output/{folder_name}/{opt.prefix}-{number:03d}-{links[url]}'
     ydl_opts = {
         'format': 'bestaudio/best',
-        #'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-%(title)s.%(ext)s',
-        # 'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-{links[url]}-%(title)s.%(ext)s',
-        'outtmpl': f'output/{folder_name}/{opt.prefix}-{number:03d}-{links[url]}.%(ext)s',
-        #'outtmpl': f'output/{folder_name}/%(autonumber)s-%({title})s.%(ext)s',
+        'outtmpl':fname,
         'metadata-from-title':"%(artist)s - %(title)s",
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -83,6 +82,15 @@ for url in links.keys():
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
+
+    # set correct metadata (works only with OPUS now)
+    from mutagen.oggopus import OggOpus
+    audio = OggOpus(f'{fname}.{opt.format}')
+    audio["title"] = f"{opt.prefix}-{links[url]}"
+    audio["albumartist"] = f"{folder_name}"
+    audio["tracknumber"] = f"{number:03d}"
+    audio["tracktotal"] = f"{totalnumber:03d}"
+    audio.save()
 
     number += 1
 
@@ -96,5 +104,5 @@ for fname in glob.glob(f'output/{folder_name}/*.opus'):
     cmd = f'ffmpeg -y -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" /tmp/file.opus'
     print(cmd)
     os.system(cmd)
-    shutil.move("/tmp/file.opus", "{fname}")
+    shutil.move("/tmp/file.opus", f"{fname}")
 
