@@ -101,8 +101,9 @@ print(50*'-')
 import glob
 import shutil
 for fname in glob.glob(f'output/{folder_name}/*.opus'):
-    cmd = f'ffmpeg -y -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" /tmp/file.opus'
+    tmpfile = f"{fname}_tmp-normalization.opus"
+    cmd = f'ffmpeg -y -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" tmpfile'
     print(cmd)
     os.system(cmd)
-    shutil.move("/tmp/file.opus", f"{fname}")
+    shutil.move(tmpfile, fname)
 
