@@ -100,10 +100,10 @@ print(50*'-')
 
 import glob
 import shutil
-for fname in glob.glob(f'output/{folder_name}/*.opus'):
-    tmpfile = f"{fname}_tmp-normalization.opus"
+for number, fname in enumerate(glob.glob(f'output/{folder_name}/*.opus')):
+    tmpfile = f"{number:03d}_tmp-normalization.opus"
     cmd = f'ffmpeg -hide_banner -y -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" {tmpfile}'
-    # print(cmd)
-    # os.system(cmd)
+    print(cmd)
+    os.system(cmd)
     shutil.move(tmpfile, fname)
 
