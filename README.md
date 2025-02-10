@@ -18,4 +18,4 @@ pip install yt_dlp mutagen
 
 ## TODO
 
-- [ ] equalize the gain of each song
+- [x] normalize / equalize the gain of each song
