@@ -5,7 +5,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--links_path", type=str, default='2021-01-15_balouzza.json',
                     help="List of links in JSON or TXT format.")
-parser.add_argument("--prefix", type=str, default='PL',
+parser.add_argument("--prefix", type=str, default='',
                     help="Prefix for filenames")
 parser.add_argument("-f", "--format", type=str, default='opus',
                     help="Coding format")
@@ -28,12 +28,12 @@ if 'txt' in opt.links_path:
        line_list = [item.rstrip() for item in line_list]
     links = {}
     for line in line_list:
-        if 'http' in line:
+        if 'http' in line: # we know the youtube URL, guess the title
             with yt_dlp.YoutubeDL() as ydl:
                 # if opt.verbose: print(ydl.extract_info(line, download=False))
                 title = ydl.extract_info(line, download=False).get('title', 'no title')
             links[line] = title
-        else:
+        else: # we know the "artist - title" let's find the best match on youtube
             results = YoutubeSearch(line, max_results=1).to_dict()[0]
             id = results['id']
             print('Found', results['title'], ' for ' , line)
@@ -60,15 +60,20 @@ os.makedirs(f'output/{folder_name}', exist_ok=True)
 print(50*'-')
 print('# loop to check all is there')
 print(50*'-')
+
 # infos = {} 
-totalnumber = 0
-for url in links.keys():
-    totalnumber += 1
-    with yt_dlp.YoutubeDL() as ydl:
-        info = ydl.extract_info(url, download=False).get('title', None)
-        # infos[title] = info
-        if opt.verbose:
-            print(info)
+# number = 1
+# totalnumber = 0
+# for url in links.keys():
+#     totalnumber += 1
+#     fname = f'output/{folder_name}/{opt.prefix}{number:03d}-{links[url]}.{opt.format}'
+#     if not os.path.isfile(fname):
+#         with yt_dlp.YoutubeDL() as ydl:
+#             info = ydl.extract_info(url, download=False).get('title', None)
+#             # infos[title] = info
+#             if opt.verbose:
+#                 print(info)
+#     number += 1
 
 # print(infos)
 
@@ -76,27 +81,34 @@ print(50*'-')
 print('# do the actual stuff')
 print(50*'-')
 number = 1
+totalnumber = len(links)
 for url in links.keys():
     if opt.verbose: print(url, links[url])
-    fname = f'output/{folder_name}/{opt.prefix}-{number:03d}-{links[url]}'
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'outtmpl':fname,
-        'metadata-from-title':"%(artist)s - %(title)s",
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': opt.format,
-            'preferredquality': opt.quality,
-        }],
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+    fname = f'output/{folder_name}/{opt.prefix}{number:03d}-{links[url]}.{opt.format}'
+
+    if not os.path.isfile(fname):
+        fname_strip = fname.replace(f'.{opt.format}', '')
+        print (fname, fname_strip)
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'outtmpl':fname_strip,
+            'metadata-from-title':"%(artist)s - %(title)s",
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': opt.format,
+                'preferredquality': opt.quality,
+            }],
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
 
     # set correct metadata (works only with OPUS now)
     from mutagen.oggopus import OggOpus
-    audio = OggOpus(f'{fname}.{opt.format}')
-    audio["title"] = f"{opt.prefix}-{links[url]}"
+    audio = OggOpus(fname)
+    audio["title"] = links[url].split(' - ')[1] #f"{opt.prefix}-{links[url]}"
     audio["albumartist"] = f"{folder_name}"
+    audio["album"] = f"{folder_name}"
+    audio["artist"] = links[url].split(' - ')[0]
     audio["tracknumber"] = f"{number:03d}"
     audio["tracktotal"] = f"{totalnumber:03d}"
     audio.save()
