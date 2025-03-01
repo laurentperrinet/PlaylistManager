@@ -19,6 +19,8 @@ if opt.verbose: print(opt)
 
 import json
 import yt_dlp
+from youtube_search import YoutubeSearch
+
 # convert txt to json
 if 'txt' in opt.links_path:
     with open(opt.links_path, "r") as file:
@@ -26,10 +28,17 @@ if 'txt' in opt.links_path:
        line_list = [item.rstrip() for item in line_list]
     links = {}
     for line in line_list:
-        with yt_dlp.YoutubeDL() as ydl:
-            # if opt.verbose: print(ydl.extract_info(line, download=False))
-            title = ydl.extract_info(line, download=False).get('title', 'no title')
-        links[line] = title
+        if 'http' in line:
+            with yt_dlp.YoutubeDL() as ydl:
+                # if opt.verbose: print(ydl.extract_info(line, download=False))
+                title = ydl.extract_info(line, download=False).get('title', 'no title')
+            links[line] = title
+        else:
+            results = YoutubeSearch(line, max_results=1).to_dict()[0]
+            id = results['id']
+            print('Found', results['title'], ' for ' , line)
+            links[f'https://www.youtube.com/watch?v={id}'] = line
+        
     print(links)
     with open(opt.links_path.replace('txt', 'json'), "w") as file:
         json.dump(links, file,  indent=4)
