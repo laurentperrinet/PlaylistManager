@@ -1,4 +1,14 @@
 #!/usr/bin/env python
+"""
+Download and convert YouTube videos to audio files.
+
+Helper script to download YouTube videos and convert them to audio files in a specified format (default is opus).
+
+One-liner for a playlist: 
+ yt-dlp  --yes-playlist --extract-audio --audio-format opus  --parse-metadata "%(title)s:%(meta_album)s" --embed-metadata -o "%(playlist_index)s - %(title)s.%(ext)s" --embed-thumbnail --parse-metadata "%(playlist_title)s:%(meta_album)s" --parse-metadata "%(playlist_index)s:%(track)s" --embed-metadata --embed-thumbnail --add-metadata  <PLAYLIST URL>
+
+"""
+
 import argparse
 
 # Parser
