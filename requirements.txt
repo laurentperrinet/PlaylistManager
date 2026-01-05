@@ -1,0 +1,7 @@
+# https://pip.pypa.io/en/stable/user_guide/#requirements-files
+# use it to install (and update) dependencies with
+# `pip install -U -r requirements.txt`
+pip
+yt-dlp
+mutagen
+youtube_search

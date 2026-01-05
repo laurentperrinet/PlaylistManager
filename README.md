@@ -10,10 +10,12 @@ A simple scrapper for sharing audio on the interweb.
 
 A question? Ask for help: `python download.py -h`.
 
-## dependencies
+## install & dependencies
 
 ```
-pip install yt_dlp mutagen
+python -m venv .venv
+source .venv/bin/activate
+pip install -U -r requirements.txt
 ```
 
 ## TODO
