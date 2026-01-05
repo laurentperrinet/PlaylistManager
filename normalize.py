@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+"""
+Normalize the volume of a bunch of audio files.
+
+Usage: 
+
+python download.py -h
+
+"""
+
 import argparse
 
 # Parser
@@ -24,5 +34,5 @@ for fname in glob.glob(f'{opt.path}/*.{opt.format}'):
     cmd = f'ffmpeg -y -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" /tmp/file.opus 2> /dev/null'
     if opt.verbose: print(cmd)
     os.system(cmd)
-    shutil.move("/tmp/file.opus", "{fname}")
+    shutil.move("/tmp/file.opus", f"{fname}")
 
