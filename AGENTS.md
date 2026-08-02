@@ -18,3 +18,11 @@ The tool processes audio downloads in a two-step pipeline:
 - **FFmpeg Dependency**: Both `download.py` and `normalize.py` rely on `ffmpeg` being installed in the system PATH.
 - **Format Limit**: Metadata tagging (`mutagen.oggopus`) is explicitly implemented only for `.opus` files.
 - **Output Structure**: Media is always stored in `output/` using the filename of the source JSON/TXT as the subfolder.
+
+## Conventions
+- **Language**: Use English for all code, documentation, and commit messages.
+- **Commenting Style**: 
+    - Use high-level docstrings for functions and classes to explain "what" and "why".
+    - Use inline comments sparingly, only for non-obvious logic (e.g., explaining `ffmpeg` filter parameters).
+    - Avoid redundant comments that repeat the code.
+
