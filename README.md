@@ -1,23 +1,41 @@
 # PlaylistManager
 
-A simple scrapper for sharing audio on the interweb.
+A simple scraper and downloader for sharing audio from YouTube.
 
-## usage
+## Installation
 
-1. Add bookmarks from youtube music videos to the `links.txt` file,
-2. issue `python download.py -p 2025-02_Paris.txt` to create a JSON file with titles,
-3. edit `links.json` and issue  `python download.py -p 2025-02_Paris.json` to download the media.
-
-A question? Ask for help: `python download.py -h`.
-
-## install & dependencies
-
-```
+```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -U -r requirements.txt
 ```
+*Note: This tool requires `ffmpeg` to be installed in your system PATH for audio conversion and normalization.*
 
-## TODO
+## Usage
 
-- [x] normalize / equalize the gain of each song
+The tool works in two main steps:
+
+### 1. Metadata Generation
+Create a `.txt` file containing either YouTube URLs or "Artist - Title" search strings. Run the script to resolve these into a `.json` mapping.
+
+```bash
+python download.py -p my_playlist.txt
+```
+This generates `my_playlist.json`. You can edit this JSON file to correct titles before downloading.
+
+### 2. Media Download & Processing
+Run the script using the JSON file to download the audio, apply metadata, and normalize the volume.
+
+```bash
+python download.py -p my_playlist.json
+```
+
+### Advanced Options
+- **Custom Prefix**: Add a prefix to filenames (e.g., `python download.py -p list.json --prefix "Album1 "`).
+- **Format**: Specify audio format (default is `opus`).
+- **Help**: See all available options with `python download.py -h`.
+
+## Project Structure
+- `output/`: Contains downloaded media organized by playlist name.
+- `download.py`: Main entry point for metadata generation and downloading.
+- `normalize.py`: Standalone utility for volume normalization.
