@@ -4,12 +4,25 @@ A simple scraper and downloader for sharing audio from YouTube.
 
 ## Installation
 
+### 1. System Dependencies
+This tool requires `ffmpeg` to be installed in your system PATH for audio conversion and normalization.
+
+- **macOS (Homebrew)**:
+  ```bash
+  brew install ffmpeg
+  ```
+- **Ubuntu/Debian**:
+  ```bash
+  sudo apt update && sudo apt install ffmpeg
+  ```
+
+### 2. Python Setup
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -U -r requirements.txt
 ```
-*Note: This tool requires `ffmpeg` to be installed in your system PATH for audio conversion and normalization.*
+
 
 ## Usage
 
