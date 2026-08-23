@@ -11,10 +11,10 @@ import os
 import sys
 import glob
 import shutil
-import subprocess
 import yt_dlp
 from youtube_search import YoutubeSearch
 from mutagen.oggopus import OggOpus
+from normalize import normalize_files
 
 def parse_arguments():
     """Handles CLI argument parsing and provides usage examples."""
@@ -130,12 +130,7 @@ def download_audio(links, folder_name, prefix, fmt, quality, verbose):
 def normalize_audio(folder_name, fmt, verbose=True):
     """Applies dynamic audio normalization using FFmpeg via normalize.py."""
     print(f"--- Normalizing audio in output/{folder_name} ---")
-    script_path = os.path.join(os.path.dirname(__file__), 'normalize.py')
-    cmd = ['python', script_path, '-p', f'output/{folder_name}', '-f', fmt]
-    if not verbose:
-        cmd.append('-v')
-        cmd.append('False')
-    subprocess.run(cmd, check=False)
+    normalize_files(f'output/{folder_name}', fmt, verbose)
 
 def main():
     opt = parse_arguments()
