@@ -1,38 +1,38 @@
 #!/usr/bin/env python
 """
-Normalize the volume of a bunch of audio files.
+Normalize the volume of a bunch of audio files using ffmpeg dynaudnorm.
 
-Usage: 
-
-python download.py -h
-
+Usage:
+    python normalize.py -p output/my_playlist -f opus
 """
 
 import argparse
-
-# Parser
-parser = argparse.ArgumentParser()
-parser.add_argument("-p", "--path", type=str, default='output/2021-01-15_balouzza',
-                    help="Folder of OPUS music files.")
-parser.add_argument("-f", "--format", type=str, default='opus',
-                    help="Coding format")
-parser.add_argument('-verbose', type=bool, default=True,
-                    help="Verbosité")
-
-opt = parser.parse_args()
-if opt.verbose: print(opt)
-
 import os
-
-print(50*'-')
-print('# normalize')
-print(50*'-')
-
 import glob
 import shutil
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-p", "--path", type=str, required=True,
+                    help="Folder containing audio files to normalize")
+parser.add_argument("-f", "--format", type=str, default='opus',
+                    help="Audio format (default: opus)")
+parser.add_argument('-v', '--verbose', action='store_true', default=True,
+                    help="Enable verbose output")
+
+opt = parser.parse_args()
+
+if opt.verbose:
+    print(opt)
+
+print(50 * '-')
+print('# normalize')
+print(50 * '-')
+
 for fname in glob.glob(f'{opt.path}/*.{opt.format}'):
-    cmd = f'ffmpeg -y -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" /tmp/file.opus 2> /dev/null'
-    if opt.verbose: print(cmd)
+    tmpfile = f"/tmp/{os.path.basename(fname)}.tmp-norm.{opt.format}"
+    cmd = f'ffmpeg -hide_banner -y -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" "{tmpfile}"'
+    if opt.verbose:
+        print(cmd)
     os.system(cmd)
-    shutil.move("/tmp/file.opus", f"{fname}")
+    shutil.move(tmpfile, fname)
 
