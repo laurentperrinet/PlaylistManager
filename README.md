@@ -1,6 +1,8 @@
 # PlaylistManager
 
-A simple scraper and downloader for sharing audio from YouTube.
+A two-step pipeline for downloading and normalizing audio from YouTube:
+1. **Metadata Generation** – Resolves YouTube URLs or "Artist - Title" strings into a structured JSON mapping
+2. **Media Download** – Downloads audio as Opus, applies metadata tags, and runs `ffmpeg` dynamic audio normalization
 
 ## Installation
 
@@ -42,6 +44,13 @@ Run the script using the JSON file to download the audio, apply metadata, and no
 ```bash
 python download.py -p my_playlist.json
 ```
+
+> **Note**: Metadata tagging is only supported for `.opus` output format (default).
+
+### Metadata Tags
+The JSON filename (without extension) becomes the **album** and **album artist** tags for all tracks:
+- `my_playlist.json` → `album=my_playlist`, `albumartist=my_playlist`
+- Track number and total are auto-assigned based on JSON order
 
 ### Advanced Options
 - **Custom Prefix**: Add a prefix to filenames (e.g., `python download.py -p list.json --prefix "Album1 "`).
