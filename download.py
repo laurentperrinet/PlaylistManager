@@ -11,6 +11,7 @@ import os
 import sys
 import glob
 import shutil
+import subprocess
 import yt_dlp
 from youtube_search import YoutubeSearch
 from mutagen.oggopus import OggOpus
@@ -126,17 +127,15 @@ def download_audio(links, folder_name, prefix, fmt, quality, verbose):
             except Exception as e:
                 print(f"Metadata error for {fname}: {e}")
 
-def normalize_audio(folder_name, fmt):
-    """Applies dynamic audio normalization using FFmpeg."""
+def normalize_audio(folder_name, fmt, verbose=True):
+    """Applies dynamic audio normalization using FFmpeg via normalize.py."""
     print(f"--- Normalizing audio in output/{folder_name} ---")
-    files = glob.glob(f'output/{folder_name}/*.{fmt}')
-    
-    for i, fname in enumerate(files):
-        tmpfile = f"output/{folder_name}/{i:03d}_tmp-norm.{fmt}"
-        # dynaudnorm is used for dynamic range compression to equalize perceived volume
-        cmd = f'ffmpeg -hide_banner -y -i "{fname}" -filter:a "dynaudnorm=p=0.9:s=5" "{tmpfile}"'
-        os.system(cmd)
-        shutil.move(tmpfile, fname)
+    script_path = os.path.join(os.path.dirname(__file__), 'normalize.py')
+    cmd = ['python', script_path, '-p', f'output/{folder_name}', '-f', fmt]
+    if not verbose:
+        cmd.append('-v')
+        cmd.append('False')
+    subprocess.run(cmd, check=False)
 
 def main():
     opt = parse_arguments()
@@ -154,7 +153,7 @@ def main():
         download_audio(links, folder_name, opt.prefix, opt.format, opt.quality, opt.verbose)
         
         if opt.format == 'opus':
-            normalize_audio(folder_name, opt.format)
+            normalize_audio(folder_name, opt.format, opt.verbose)
         else:
             print("Normalization is currently only implemented for .opus files.")
             

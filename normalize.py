@@ -16,8 +16,8 @@ parser.add_argument("-p", "--path", type=str, required=True,
                     help="Folder containing audio files to normalize")
 parser.add_argument("-f", "--format", type=str, default='opus',
                     help="Audio format (default: opus)")
-parser.add_argument('-v', '--verbose', action='store_true', default=True,
-                    help="Enable verbose output")
+parser.add_argument('-v', '--verbose', type=lambda x: x.lower() != 'false', default=True,
+                    help="Enable verbose output (default: True, use -v False to disable)")
 
 opt = parser.parse_args()
 
